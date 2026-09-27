@@ -1,0 +1,7 @@
+# Copy this file to tools/desk-sync.conf and adjust the values.
+# Keep tenant-specific URLs and local paths out of versioned examples.
+
+DESK_REPO_URL=
+DESK_LOCAL_DIR=
+DESK_BRANCH=main
+

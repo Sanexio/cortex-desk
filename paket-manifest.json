@@ -1,0 +1,9 @@
+{
+  "name": "cortex-desk",
+  "ring": "gelb",
+  "runtime": { "zweig": "python_floor", "python_floor": "3.9", "dienste": [] },
+  "daten_pfad": "~/.cortex/apps/cortex-desk/var",
+  "modell": { "basis_tier": "tiny", "tiny_degradiert_ok": true },
+  "selbsttest": null,
+  "daten": { "klasse_max": "K1", "phi": false }
+}

@@ -1,0 +1,27 @@
+{{BRIEFKOPF}}
+
+{{EMPFAENGERBLOCK}}
+
+{{ORT}}, {{DATUM}}
+Aktenzeichen: {{AKTENZEICHEN}}
+Ihr Schreiben vom: {{BEZUGSDATUM}}
+
+Betreff: Ihre Anfrage — {{STEUERLICHER_VORGANGSBEZUG}}
+Steuerliche Kennung: {{ERFORDERLICHE_STEUERLICHE_KENNUNG}}
+
+{{ANREDE}}
+
+## Sachverhalt
+{{SACHVERHALT_AUS_UNTERLAGEN}}
+
+## Antworten auf Ihre Fragen
+### {{FRAGE_IM_WORTLAUT}}
+{{FACHLICH_GEPRUEFTE_ANTWORT_AUS_UNTERLAGEN}}
+
+## Belege
+{{BELEGVERZEICHNIS}}
+
+Mit freundlichen Grüßen
+
+{{UNTERSCHRIFT}}
+{{UNTERZEICHNENDE_ROLLE}}

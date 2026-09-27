@@ -1,0 +1,48 @@
+# Tenant-spezifische Inhalte (gitignored, damit Tenant-Forks ihre
+# konkreten Adressaten, Praxis-Header, Patient/Mandanten-Daten sicher
+# halten — alles streng DSGVO-relevant)
+# Pattern statt Einzeldateien: JEDE *_TENANT.md bleibt draussen —
+# deckt auch kuenftige Tenant-Files ab (Review-Fund 2026-07-26).
+*_TENANT.md
+
+# Lokale Sync-Konfiguration (enthaelt Repo-URL + lokale Pfade)
+tools/desk-sync.conf
+
+# Live-Arbeitsverzeichnisse — NIEMALS committen
+# (enthalten echte Patient-/Mandanten-Originale + erzeugte Antworten)
+Medizin/Input/
+Medizin/Output/
+Medizin/ARCHIV/
+VSR/Input/
+VSR/Output/
+VSR/ARCHIV/
+
+# Office-Sperr- und Backup-Dateien
+~$*.docx
+~$*.xlsx
+*.docx.bak
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.orig
+*.bak
+
+# Python (für eigene Tool-Anbindungen, falls Tenant Python nutzt)
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Logs
+*.log
+*.pyo
+.tmp/
+
+# Demo-Ausgaben (erzeugt von examples/run-demo.sh)
+examples/befund-pipeline-demo/out/

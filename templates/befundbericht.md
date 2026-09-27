@@ -1,0 +1,30 @@
+{{BRIEFKOPF}}
+
+{{EMPFAENGERBLOCK}}
+
+{{ORT}}, {{DATUM}}
+Aktenzeichen: {{AKTENZEICHEN}}
+Ihr Schreiben vom: {{BEZUGSDATUM}}
+
+Betreff: Befundbericht — {{PATIENTENBEZUG}}
+
+{{ANREDE}}
+
+## Anamnese
+{{ANAMNESE_AUS_UNTERLAGEN}}
+
+## Befund
+{{BEFUND_AUS_UNTERLAGEN}}
+
+## Beurteilung
+{{AERZTLICH_GEPRUEFTE_BEURTEILUNG_AUS_UNTERLAGEN}}
+
+## Therapie-Empfehlung
+{{AERZTLICH_GEPRUEFTE_EMPFEHLUNG_AUS_UNTERLAGEN}}
+
+Anlagen: {{ANLAGEN}}
+
+Mit freundlichen Grüßen
+
+{{UNTERSCHRIFT}}
+{{UNTERZEICHNENDE_ROLLE}}

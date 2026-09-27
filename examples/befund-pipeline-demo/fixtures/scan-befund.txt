@@ -1,0 +1,33 @@
+SIMULIERTER SCAN-TEXT - KEIN ECHTER PATIENTENBEFUND
+
+Absenderrolle: Facharztpraxis fuer Innere Medizin
+Absendername: Demo-Praxis Musterstadt
+Empfaengerrolle: Hausarztpraxis
+Empfaengername: Praxis fuer Allgemeinmedizin Demoallee
+
+Dokumentdatum: 2026-04-15
+Patient: Max Mustermann
+Geburtsdatum: 1980-01-31
+Dokumenttyp: Befundbericht
+
+Anlass:
+Kontrollvorstellung nach wiederholten unspezifischen Oberbauchbeschwerden.
+
+Befund:
+Klinisch stabiler Allgemeinzustand. Blutdruck 128/82 mmHg. Kein Hinweis
+auf akute Dyspnoe. Laborwerte im vorliegenden Demo-Text nicht angegeben.
+
+Diagnosen:
+- K29.7 Gastritis, nicht naeher bezeichnet
+- E11.9 Diabetes mellitus Typ 2 ohne Komplikationen
+- I10 Essentielle Hypertonie
+
+Medikation:
+- Metformin 500 mg 1-0-1
+- Ramipril 5 mg 1-0-0
+- Pantoprazol 20 mg bei Bedarf
+
+Beurteilung:
+Die Angaben beruhen ausschliesslich auf diesem fiktiven Demo-Text.
+Es werden keine weiteren Diagnosen oder Empfehlungen abgeleitet.
+

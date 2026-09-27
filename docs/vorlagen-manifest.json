@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "nur_platzhalter": true,
+  "vorlagen": [
+    {
+      "pfad": "templates/amtsanfrage-medizin.md",
+      "phase": "B.4",
+      "typ": "markdown-strukturvorlage"
+    },
+    {
+      "pfad": "templates/amtsanfrage-steuer.md",
+      "phase": "B.4",
+      "typ": "markdown-strukturvorlage"
+    },
+    {
+      "pfad": "templates/au-erfassungsblatt.md",
+      "phase": "B.4",
+      "typ": "markdown-strukturvorlage"
+    },
+    {
+      "pfad": "templates/befundbericht.md",
+      "phase": "B.4",
+      "typ": "markdown-strukturvorlage"
+    },
+    {
+      "pfad": "templates/briefkopf.md",
+      "phase": "B.4",
+      "typ": "markdown-strukturvorlage"
+    },
+    {
+      "pfad": "templates/reha-erfassungsblatt.md",
+      "phase": "B.4",
+      "typ": "markdown-strukturvorlage"
+    },
+    {
+      "pfad": "templates/vorgangspruefung.md",
+      "phase": "B.4",
+      "typ": "markdown-strukturvorlage"
+    }
+  ]
+}
