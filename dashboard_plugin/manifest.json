@@ -1,0 +1,12 @@
+{
+  "name": "tosort",
+  "label": "TOSORT",
+  "description": "TOSORT – Eingang und Vorbereitung zur Freigabe",
+  "icon": "Inbox",
+  "version": "0.1.0",
+  "section": "vsr",
+  "tab": {"path": "/tosort", "section": "vsr", "position": "after:ledger"},
+  "entry": "dist/index.js",
+  "css": "dist/style.css",
+  "api": "plugin_api.py"
+}

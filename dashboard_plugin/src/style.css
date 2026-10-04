@@ -1,0 +1,9 @@
+.tosort-app { max-width: 1100px; margin: auto; padding: 24px; color: var(--text-primary, #e2e8f0); }
+.tosort-app h1 { font-size: 28px; margin-bottom: 8px; }
+.tosort-app h2 { font-size: 18px; }
+.tosort-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+.tosort-card { border: 1px solid var(--border-color, #475569); border-radius: 12px; padding: 20px; background: var(--bg-secondary, #182235); }
+.tosort-count { font-size: 28px; font-weight: 650; }
+.tosort-app button { background: #2563eb; color: white; border: 0; border-radius: 8px; padding: 12px 18px; cursor: pointer; font: inherit; }
+.tosort-app button:disabled { opacity: .55; cursor: default; }
+.tosort-app button:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
