@@ -6,6 +6,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import stat
 import subprocess
 import sys
@@ -14,9 +15,20 @@ import time
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 
-router = APIRouter()
+
+def require_local_host(request: Request):
+    """Reject rebinding authorities before any endpoint reads or starts work."""
+    hosts = request.headers.getlist('host')
+    if len(hosts) != 1:
+        raise HTTPException(403, 'Zugriff nicht erlaubt')
+    match = re.fullmatch(r'(?:127\.0\.0\.1|localhost)(?::([0-9]{1,5}))?', hosts[0])
+    if match is None or (match[1] is not None and not 1 <= int(match[1]) <= 65535):
+        raise HTTPException(403, 'Zugriff nicht erlaubt')
+
+
+router = APIRouter(dependencies=[Depends(require_local_host)])
 BASE = Path(__file__).resolve().parent
 SKILL = Path(os.environ.get('TOSORT_SKILL_ROOT', Path.home() / 'Cortex/Desk/_skills/archiv-tosort'))
 ARCHIVE = Path(os.environ.get('ARCHIV_ROOT', SKILL.parent.parent / 'ARCHIV'))
@@ -192,7 +204,7 @@ def worker(lock, writer_lock, data, sequence):
 def start(request: Request):
     if not enabled():
         raise HTTPException(403, 'Laufstart nicht aktiviert')
-    # The host supplies authentication. Require a same-origin custom header too.
+    # Host validation is not user authentication. Keep the additional start guard.
     if request.headers.get('x-tosort-action') != 'start' or request.headers.get('sec-fetch-site') == 'cross-site':
         raise HTTPException(403, 'Laufstart nicht erlaubt')
     lock = None

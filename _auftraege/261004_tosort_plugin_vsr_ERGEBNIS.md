@@ -57,3 +57,55 @@ den Plugin-Lock serialisiert. Hard-Kill/Teilprodukte benötigen manuelle Prüfun
 Die bestehenden Skripte schreiben beim späteren Betrieb ihre üblichen
 Katalog-/Freigabe-/Lernartefakte außerhalb dieses Repos; im Auftrag wurden
 nur ihre Aufrufe implementiert und durch Fixture-Skripte verifiziert.
+
+## Haertung Host-Check
+
+Review 20:10 umgesetzt am 04.10.2026. Kein Commit, keine Aktivierung;
+alle Änderungen und Testartefakte ausschließlich in `cortex-desk`.
+
+Vor Änderung gemessen (Referenzen ausschließlich gelesen):
+`Nexus/dashboard/server.py:333` erstellt die FastAPI-App ohne zentrale
+Host-/Authentifizierungs-Middleware; `:350` bindet Plugin-Router ohne zusätzliche
+Dependencies ein. Die Loopback-Bindung bei `:371` prüft keinen HTTP-Host.
+`Nexus/plugins/kalkulation/dashboard/plugin_api.py:67` und `:87` verwenden den
+Host zur URL-Bildung, ohne Erlaubnisliste (identisch im geprüften
+`projects/cortex-prx-kalkulation/dashboard_plugin/kalkulation/dashboard/plugin_api.py`).
+Damit kein belegbarer Fehlalarm und kein bestehender zentraler Schutz, der
+hier doppelt implementiert würde. Die vorhandene APIRouter-Einbindung bleibt erhalten.
+
+`dashboard_plugin/plugin_api.py:21` prüft genau einen Host-Header gegen
+`127.0.0.1` bzw. `localhost`, optional mit ASCII-Port 1–65535.
+Die Router-Dependency bei `:31` schützt beide Status-GETs und den Start-POST
+vor Ausführung der Endpunkte. Fremde, fehlende, leere, doppelte oder manipulierte
+Hosts erhalten ausschließlich `403 {"detail":"Zugriff nicht erlaubt"}`.
+Forwarded-/X-Forwarded-Host-Werte gewähren keine Ausnahme.
+Der Start bleibt ohne `TOSORT_ENABLE_RUN=1` deaktiviert; Action-Header und
+Cross-Site-Sperre bleiben zusätzlich erforderlich. Host-Prüfung ist
+DNS-Rebinding-Schutz, keine Benutzer-Authentifizierung; diese muss weiterhin
+der Dashboard-Host bereitstellen. Die frühere unbelegte Code-Aussage, der Host
+liefere bereits Authentifizierung, wurde korrigiert.
+
+Nachweis: **19 Tests bestanden, 0 fehlgeschlagen** — ursprüngliche 16er-Suite
+plus drei neue Tests (18 Python + 1 React/jsdom).
+Neue Prüfungen: erlaubte Hosts/Ports auf beiden GETs; 27 ungültige bzw.
+fehlende/doppelte Host-Konstellationen auf allen drei Endpunkten (81 negative
+Requests); deaktivierter Start bei tatsächlich fehlender Aktivierungsvariable.
+Bei sämtlichen negativen Host-Requests bleiben Messung, Statuslesen,
+Routing-Lesen, Kommandoerzeugung, Thread und Subprozess unaufgerufen;
+keine State-Dateien oder Writer-Locks entstehen. Antworten sind exakt auf
+die neutrale Fehlermeldung beschränkt. Raw-ASGI-Requests sichern insbesondere
+den fehlenden Host ab, den der TestClient sonst automatisch ergänzt.
+
+Ausgeführt vom Repo-Root:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 /Users/ssmd/Cortex/Nexus/.venv/bin/python -B -m unittest discover -s dashboard_plugin/tests -v
+npm test --prefix dashboard_plugin
+git diff --check
+```
+
+Aktualisierte Nachweise: `dashboard_plugin/evidence/python-tests.txt` und
+`dashboard_plugin/evidence/dom-tests.txt`. Bestehende httpx-Deprecation weiterhin
+ohne Testfehler. `dist` enthält ausschließlich unverändertes JS/CSS und ist
+von der Python-Härtung nicht betroffen; kein Neubuild erforderlich, src/dist
+auf Inhaltsgleichheit geprüft. Keine produktive Pipeline gestartet.

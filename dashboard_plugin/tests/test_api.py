@@ -1,3 +1,4 @@
+import asyncio
 import importlib.util
 import json
 import os
@@ -39,11 +40,81 @@ class PluginTests(unittest.TestCase):
             self.addCleanup(p.stop)
         app = FastAPI()
         app.include_router(api.router, prefix='/api/plugins/tosort')
-        self.client = TestClient(app)
+        self.app = app
+        self.client = TestClient(app, base_url='http://127.0.0.1:9119')
         self.addCleanup(self.client.close)
 
     def post(self, **kwargs):
         return self.client.post('/api/plugins/tosort/lauf', headers={'X-TOSORT-Action': 'start'}, **kwargs)
+
+    def test_host_allowlist(self):
+        for host in ['127.0.0.1', 'localhost', '127.0.0.1:9119', 'localhost:80',
+                     'localhost:1', '127.0.0.1:65535']:
+            for endpoint in ['/status', '/lauf/status']:
+                with self.subTest(host=host, endpoint=endpoint):
+                    self.assertEqual(self.client.get('/api/plugins/tosort' + endpoint,
+                                                     headers={'Host': host}).status_code, 200)
+
+    def test_invalid_hosts_block_all_endpoints_without_side_effects(self):
+        async def raw_request(method, endpoint, headers):
+            messages = []
+
+            async def receive():
+                return {'type': 'http.request', 'body': b'', 'more_body': False}
+
+            async def send(message):
+                messages.append(message)
+
+            await self.app({'type': 'http', 'asgi': {'version': '3.0'},
+                'http_version': '1.1', 'method': method, 'scheme': 'http',
+                'path': '/api/plugins/tosort' + endpoint, 'query_string': b'',
+                'root_path': '', 'server': ('127.0.0.1', 9119), 'client': ('127.0.0.1', 12345),
+                'headers': [(name.lower().encode(), value.encode()) for name, value in headers]},
+                receive, send)
+            return messages[0]['status'], json.loads(b''.join(
+                message.get('body', b'') for message in messages))
+
+        cases = [[('Host', host)] for host in [
+            'attacker.example', 'localhost.attacker.example', '127.0.0.1.attacker.example',
+            'localhost@attacker.example', 'attacker.example:9119', '127.1', '2130706433',
+            '[::1]', '0.0.0.0', '', ' localhost', 'localhost ', 'localhost.',
+            'localhost:', 'localhost:abc', 'localhost:0', 'localhost:65536',
+            'localhost:123456', 'localhost:+80', 'localhost:80/path',
+            'localhost,attacker.example', 'localhost\t', 'LOCALHOST',
+        ]]
+        cases += [[], [('Host', 'localhost'), ('Host', 'attacker.example')],
+                  [('Host', 'attacker.example'), ('Host', 'localhost')],
+                  [('Host', 'localhost'), ('Host', 'localhost')]]
+        with patch.object(api, 'measure') as measure, patch.object(api, 'run_state') as state, \
+                patch.object(api, 'last_routing') as routing, patch.object(api, 'commands') as commands, \
+                patch.object(api, 'Thread') as thread, patch.object(api.subprocess, 'run') as run:
+            for headers in cases:
+                for method, endpoint in [('GET', '/status'), ('GET', '/lauf/status'), ('POST', '/lauf')]:
+                    with self.subTest(headers=headers, endpoint=endpoint):
+                        # Raw ASGI avoids TestClient synthesizing a missing Host header.
+                        status, body = asyncio.run(raw_request(method, endpoint,
+                            headers + [('X-TOSORT-Action', 'start'),
+                            ('X-Forwarded-Host', 'localhost'), ('Forwarded', 'host=localhost')]))
+                        self.assertEqual(status, 403)
+                        self.assertEqual(body, {'detail': 'Zugriff nicht erlaubt'})
+            for mock in [measure, state, routing, commands, thread, run]:
+                mock.assert_not_called()
+        self.assertFalse(api.STATE.exists())
+        self.assertFalse((self.logs / '.archiv_index_writer.lock').exists())
+
+    def test_start_disabled_by_default_for_allowed_hosts(self):
+        with patch.dict(os.environ):
+            os.environ.pop('TOSORT_ENABLE_RUN', None)
+            with patch.object(api, 'Thread') as thread, patch.object(api.subprocess, 'run') as run:
+                for host in ['localhost', '127.0.0.1:9119']:
+                    response = self.client.post('/api/plugins/tosort/lauf', headers={
+                        'Host': host, 'X-TOSORT-Action': 'start'})
+                    self.assertEqual(response.status_code, 403)
+                    self.assertEqual(response.json(), {'detail': 'Laufstart nicht aktiviert'})
+                    self.assertFalse(self.client.get('/api/plugins/tosort/status',
+                        headers={'Host': host}).json()['can_start'])
+                thread.assert_not_called()
+                run.assert_not_called()
 
     def test_empty_vs_missing(self):
         self.assertEqual(api.measure(self.inbox)['count'], 0)

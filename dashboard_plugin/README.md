@@ -40,8 +40,12 @@ verwaister `running`-Status ergeben „nicht messbar“.
 Die UI pollt alle 2,5 Sekunden. Start während eines Laufs: 409.
 Start ist ohne `TOSORT_ENABLE_RUN=1` gesperrt. Custom-Header
 `X-TOSORT-Action: start` ist Pflicht; `Sec-Fetch-Site: cross-site` wird abgewiesen.
-Authentifizierung/Zugriffsschutz muss der Dashboard-Host bereitstellen;
-der Header ist kein Authentifizierungsersatz. Keine offene CORS-Freigabe setzen.
+Alle drei API-Endpunkte prüfen vor Zugriffen den Host-Header: genau einmal
+`127.0.0.1` oder `localhost`, optional mit numerischem Port 1–65535.
+Fehlende, fremde, doppelte oder ungültige Hosts erhalten 403 ohne Interna.
+Forwarding-Header ersetzen diese Prüfung nicht. Die Host-Prüfung schützt gegen
+DNS-Rebinding; Benutzer-Authentifizierung muss der Dashboard-Host bereitstellen.
+Der Action-Header ist kein Authentifizierungsersatz. Keine offene CORS-Freigabe setzen.
 
 Der Adapter ruft ausschließlich die bestehenden Skripte auf, sequenziell:
 

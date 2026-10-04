@@ -2,7 +2,7 @@
 > test
 > node --test tests/dom.test.cjs
 
-✔ Real React DOM: aggregate status, start, polling, failure, privacy (38.376791ms)
+✔ Real React DOM: aggregate status, start, polling, failure, privacy (57.496334ms)
 ℹ tests 1
 ℹ suites 0
 ℹ pass 1
@@ -10,4 +10,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 210.169292
+ℹ duration_ms 275.551459
