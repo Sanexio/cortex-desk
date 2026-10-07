@@ -31,6 +31,25 @@ Sie enthalten ausschließlich Platzhalter; befüllte Kopien bleiben im privaten 
 - **`examples/`** — freie Demos mit fiktiven Daten.
 - **`tools/desk-sync.sh`** — freies Sync-Hilfsskript; lokale
   Konfiguration nach `tools/desk-sync.conf.example` erforderlich.
+- **`tests/`** — Testsuiten für `examples/` und `tools/`. Die Suite des
+  Dashboard-Plugins liegt weiterhin unter `dashboard_plugin/tests/`.
+
+## Tests
+
+Alle Tests legen ihre Fixtures synthetisch in Wegwerf-Verzeichnissen an;
+weder echte Dokumente noch Netzzugriff sind beteiligt.
+
+```sh
+# Repo-Suiten (examples/, tools/)
+PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s tests -t tests
+
+# Plugin-Suiten (FastAPI-Adapter, React-Oberfläche)
+PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s dashboard_plugin/tests
+npm ci --prefix dashboard_plugin --no-audit --no-fund && npm test --prefix dashboard_plugin
+
+# Alles zusammen mit Abdeckungsbericht
+bash tests/coverage.sh
+```
 
 ## Was hier explizit NICHT drin ist
 

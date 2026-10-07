@@ -138,5 +138,8 @@ npm test --prefix dashboard_plugin
 Tests schreiben ausschließlich Fixtures innerhalb dieses Repos. Der Subprozess-Test
 führt ausschließlich synthetische Skripte aus. Der React/jsdom-Test lädt **dist**,
 montiert die echte Komponente, klickt, pollt und prüft Ausfall/Redaktion.
+`tests/dom.test.cjs` deckt den Ablauf ab; `tests/render.test.cjs` deckt die
+Feld-für-Feld-Rückfälle auf „nicht messbar“ ab und lädt `dist` per `require`,
+damit `node --test --experimental-test-coverage` die Datei messen kann.
 `evidence/dom-fixture.html` ist der serialisierte Fixture-DOM, kein Screenshot
 und kein Nachweis einer Live-Aktivierung in :9119.

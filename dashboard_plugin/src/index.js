@@ -4,8 +4,11 @@
   if (!sdk || !registry) return;
   var h = sdk.React.createElement, useState = sdk.hooks.useState, useEffect = sdk.hooks.useEffect;
   var API = '/api/plugins/tosort';
-  var labels = { running: 'Läuft', awaiting_review: 'Vorbereitung abgeschlossen · Freigabe ausstehend', failed: 'Fehlgeschlagen', not_measurable: 'nicht messbar' };
-  var steps = { scan: 'Katalog', hash: 'Dublettenprüfung', registers: 'Register', learning: 'Lernabgleich', routing: 'Routing', review: 'Freigabetabelle' };
+  // Prototype-less tables: a status/step named 'constructor' or '__proto__' must
+  // stay unknown instead of resolving to an inherited Object member.
+  function table(entries) { return Object.assign(Object.create(null), entries); }
+  var labels = table({ running: 'Läuft', awaiting_review: 'Vorbereitung abgeschlossen · Freigabe ausstehend', failed: 'Fehlgeschlagen', not_measurable: 'nicht messbar' });
+  var steps = table({ scan: 'Katalog', hash: 'Dublettenprüfung', registers: 'Register', learning: 'Lernabgleich', routing: 'Routing', review: 'Freigabetabelle' });
   function date(value) {
     if (typeof value !== 'string' || !/^\d{4}-\d\d-\d\dT/.test(value)) return 'nicht messbar';
     var d = new Date(value);

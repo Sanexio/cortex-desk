@@ -44,5 +44,10 @@ venv/
 *.pyo
 .tmp/
 
+# Coverage-Artefakte (tests/coverage.sh)
+.coverage
+.coverage.*
+htmlcov/
+
 # Demo-Ausgaben (erzeugt von examples/run-demo.sh)
 examples/befund-pipeline-demo/out/
