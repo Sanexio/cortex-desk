@@ -51,3 +51,8 @@ htmlcov/
 
 # Demo-Ausgaben (erzeugt von examples/run-demo.sh)
 examples/befund-pipeline-demo/out/
+
+# Interne Auftragsprotokolle (nicht im oeffentlichen OSS-Baum)
+_auftraege/
+# Rohtest-Evidence mit lokalen Pfaden
+dashboard_plugin/evidence/python-tests.txt
