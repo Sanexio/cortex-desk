@@ -1,5 +1,5 @@
-use cortex_app_core::{schreibe_manifest, AndockManifest, Startziel};
 use crate::basis::cortex_basis;
+use cortex_app_core::{schreibe_manifest, AndockManifest, Startziel};
 use tauri::AppHandle;
 
 use crate::app_meta::{app_id, BUNDLE_ID, KLASSE, PRODUKTNAME, VERSION};
@@ -33,10 +33,7 @@ mod tests {
 
     #[test]
     fn manifest_roundtrip() {
-        let dir = std::env::temp_dir().join(format!(
-            "cortex-desk-andock-{}",
-            uuid_simple()
-        ));
+        let dir = std::env::temp_dir().join(format!("cortex-desk-andock-{}", uuid_simple()));
         fs::create_dir_all(&dir).unwrap();
         let basis = dir.join("basis");
         fs::create_dir_all(&basis).unwrap();

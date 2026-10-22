@@ -125,6 +125,17 @@ async function render(): Promise<void> {
       void paint();
     }));
 
+    const license = await loadLicense();
+    if (active !== "status" && !license.gebucht) {
+      const locked = el("section", "card");
+      locked.append(el("h2", undefined, "Nicht gebucht"), el("p", undefined, "Signierte Freischaltung erforderlich. In-App-Kauf: Freischaltung ohne Zahlung."));
+      const status = el("button", "primary", "Lizenzstatus öffnen");
+      status.addEventListener("click", () => { active = "status"; void paint(); });
+      locked.append(status);
+      body.append(locked);
+      return;
+    }
+
     if (active === "regeln") {
       const card = el("section", "card");
       card.appendChild(el("h2", undefined, "Öffentliches Regelwerk"));
@@ -132,7 +143,7 @@ async function render(): Promise<void> {
         el(
           "p",
           "muted",
-          "Kuratierte Regeln und Schemata aus diesem Repository — nur Platzhalter und Framework-Text, keine Tenant-Daten.",
+          "Kuratierte Regeln und Schemata aus dem eingebauten Framework — nur Platzhalter und Framework-Text, keine Tenant-Daten.",
         ),
       );
       const list = el("ul", "rules");
@@ -159,13 +170,18 @@ async function render(): Promise<void> {
       card.appendChild(el("h2", undefined, "Phase-B-Vorlagen (Platzhalter)"));
       const vorlagen = await loadVorlagen();
       const ul = el("ul", "rules");
+      const viewer = el("pre", "viewer", "Vorlage auswählen …");
       for (const v of vorlagen) {
         const li = el("li");
-        li.appendChild(el("span", "mono", v.pfad));
+        const btn = el("button", "link", v.pfad);
+        btn.addEventListener("click", () => {
+          void invoke<string>("vorlagen_read", { pfad: v.pfad }).then(text => { viewer.textContent = text; }).catch(err => { viewer.textContent = String(err); });
+        });
+        li.appendChild(btn);
         li.appendChild(el("span", "muted", ` · ${v.phase} · ${v.typ}`));
         ul.appendChild(li);
       }
-      card.appendChild(ul);
+      card.append(ul, viewer);
       body.appendChild(card);
     }
 

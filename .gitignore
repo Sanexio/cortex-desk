@@ -61,3 +61,6 @@ dashboard_plugin/evidence/python-tests.txt
 app/node_modules/
 app/dist/
 app/src-tauri/target/
+
+# Immutable local release evidence and signed bundles.
+app/release/

@@ -28,3 +28,7 @@ cortex-app-core = { path = "../../../cortex-app-core/crates/cortex-app-core" }
 codegen-units = 1
 lto = true
 strip = true
+
+[dev-dependencies]
+ed25519-dalek = "2"
+base64 = "0.22"

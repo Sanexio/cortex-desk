@@ -427,8 +427,10 @@ dependencies = [
 name = "cortex-desk-app"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "chrono",
  "cortex-app-core",
+ "ed25519-dalek",
  "serde",
  "serde_json",
  "tauri",

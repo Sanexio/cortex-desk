@@ -29,17 +29,16 @@
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
-      "icons/icon.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
       "icons/icon.ico"
     ],
     "createUpdaterArtifacts": false
   },
   "plugins": {
     "updater": {
-      "pubkey": "REPLACE_WITH_MINISIGN_PUBLIC_KEY",
-      "endpoints": [
-        "https://updates.example.com/cortex-desk/{{target}}/{{arch}}/{{current_version}}"
-      ]
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFBMDExMDlCNTBERDg0QjYKUldTMmhOMVFteEFCcXBhUkZnVzMxSmtuSFpQbTJQSXlmRE1jbW9BS05QK0l6RTIrTW9EUDFrdmQK",
+      "endpoints": []
     }
   }
 }

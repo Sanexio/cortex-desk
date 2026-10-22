@@ -56,3 +56,9 @@ cd app/src-tauri && cargo test
 - `Nexus/specs/app-marketplace/00_KONZEPT.md`, `02_CORTEX_APP_DESIGN.md`
 - `Nexus/_rules/design-theme.md`
 - Vorlage: `projects/cortex-tenant-template/app-template/`, `projects/cortex-app-core`
+
+## BA2 Release-Härtung
+
+Der Cursor-Zweig bleibt Grundlage. Regelwerk und explizit freigegebene Framework-Vorlagen sind jetzt einkompiliert: kein Laufzeit-Zugriff auf den Quellordner oder Tenant-Dateien. Native Inhaltsbefehle prüfen signierte Lizenz, feste App-Kennung und Klasse. Fehlende Freischaltung zeigt eine nutzbare Statusoberfläche. Echte signierte synthetische Nutzlasten prüfen gültig, fremder Schlüssel, Ablauf, falsche App und nachträgliche Manipulation. QR-Symbol aus der bestehenden Cortex-App; Praxis 2025 bleibt Default, Cyberpunk umschaltbar. Private Update-Adresse je Produkt vorbereitet, kein öffentlicher Release. Keine Update-Schlüssel oder Passwörter ausgelesen.
+
+Apple-Notarisierung ist am 22.10.2026 durch HTTP 403 (fehlende/abgelaufene erforderliche Vereinbarung) gesperrt. Developer-ID-Signatur ist möglich. Ohne Accepted/Ticket/Gatekeeper keine Verteilung. Windows/Linux in dieser BA2-Mac-Welle nicht als gebaut oder gestartet behauptet.
