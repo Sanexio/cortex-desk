@@ -1,5 +1,6 @@
+import {mountUpdates} from "./updates";
 import { invoke } from "@tauri-apps/api/core";
-import { applyTheme, cycleTheme, readTheme } from "./theme";
+import { cycleTheme, readTheme } from "./theme";
 
 interface LicenseOverview {
   state: string;
@@ -70,17 +71,6 @@ async function loadInfo(): Promise<AppInfo | null> {
   return invoke<AppInfo>("app_info");
 }
 
-async function checkUpdate(line: HTMLElement): Promise<void> {
-  line.textContent = "Suche nach Updates …";
-  try {
-    const version = await invoke<string | null>("updater_check");
-    line.textContent = version
-      ? `Update verfügbar: ${version}`
-      : "Kein Update verfügbar (Stub-Feed).";
-  } catch (err) {
-    line.textContent = `Update-Prüfung: ${String(err)}`;
-  }
-}
 
 function renderTabs(active: string, onSelect: (id: string) => void): HTMLElement {
   const nav = el("nav", "tabs");
@@ -203,11 +193,7 @@ async function render(): Promise<void> {
           ),
         );
       }
-      const updateLine = el("p", "muted");
-      const updateBtn = el("button", undefined, "Nach Updates suchen");
-      updateBtn.addEventListener("click", () => void checkUpdate(updateLine));
-      if (!isTauri()) updateBtn.disabled = true;
-      card.append(updateBtn, updateLine);
+      mountUpdates(card, invoke);
 
       const dash = el("section", "card");
       dash.appendChild(el("h2", undefined, "Dashboard-Plugin (TOSORT)"));

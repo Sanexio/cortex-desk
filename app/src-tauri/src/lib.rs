@@ -1,3 +1,4 @@
+use cortex_app_updates as updates;
 mod app_meta;
 mod basis;
 mod cortex_start;
@@ -6,7 +7,6 @@ mod lizenzanzeige;
 mod schluessel;
 
 use serde::Serialize;
-use tauri_plugin_updater::UpdaterExt;
 
 use crate::desk_content::{RuleEntry, VorlageEntry};
 
@@ -57,28 +57,12 @@ fn lizenz_ueberblick() -> lizenzanzeige::LicenseOverview {
     lizenzanzeige::ueberblick()
 }
 
-#[tauri::command]
-async fn updater_check(app: tauri::AppHandle) -> Result<Option<String>, String> {
-    // Exact private repository; the public verification key is compiled into this app.
-    let builder = app
-        .updater_builder()
-        .endpoints(vec![tauri::Url::parse(
-            "https://api.github.com/repos/Sanexio/cortex-desk/releases/latest",
-        )
-        .map_err(|e| e.to_string())?])
-        .map_err(|e| e.to_string())?;
-    let updater = builder.build().map_err(|e| e.to_string())?;
-    match updater.check().await {
-        Ok(Some(update)) => Ok(Some(update.version.clone())),
-        Ok(None) => Ok(None),
-        Err(e) => Err(e.to_string()),
-    }
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .manage(updates::UpdateSpeicher::default())
         .setup(|app| {
             cortex_start::beim_start(app.handle())?;
             Ok(())
@@ -90,7 +74,9 @@ pub fn run() {
             vorlagen_list,
             vorlagen_read,
             lizenz_ueberblick,
-            updater_check
+            updates::update_status,
+        updates::update_pruefen,
+        updates::update_installieren
         ])
         .run(tauri::generate_context!())
         .expect("Cortex Desk konnte nicht starten");
