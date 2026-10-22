@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "product_id": "cortex-desk",
+  "fields": [
+    "timestamp",
+    "event",
+    "outcome"
+  ],
+  "retention_seconds": 0,
+  "support_max_age_seconds": 86400,
+  "automatic_export": false,
+  "support": "cortex_app_core::audit::support_excerpt"
+}
