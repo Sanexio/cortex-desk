@@ -431,6 +431,7 @@ dependencies = [
  "base64 0.22.1",
  "flate2",
  "minisign-verify",
+ "plist",
  "reqwest",
  "rustls",
  "semver",
