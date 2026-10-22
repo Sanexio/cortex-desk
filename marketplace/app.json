@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "cortex-desk",
+  "name": "Cortex Desk",
+  "kurzbeschreibung": "Regelwerk und Vorlagen für die Verwaltungsschicht einer Arztpraxis — eigenständig, ohne Tenant-Daten.",
+  "version": "0.1.0",
+  "bundle_id": "de.sanexio.cortex-desk",
+  "klasse": "K0",
+  "symbol": "icon.png",
+  "symbol_qr": "icon-qr.png",
+  "plattformen": ["macos", "windows", "linux"],
+  "update_kanal": "https://updates.example.com/cortex-desk/{{target}}/{{arch}}/{{current_version}}",
+  "lizenz_app_kennung": "cortex-desk",
+  "repository": "Sanexio/cortex-desk",
+  "einzelapp_zweig": "einzelapp-20261022"
+}

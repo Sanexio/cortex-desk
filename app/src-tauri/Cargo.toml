@@ -1,0 +1,30 @@
+[package]
+name = "cortex-desk-app"
+version = "0.1.0"
+description = "Cortex Desk — Regelwerk als native Einzel-App"
+edition = "2021"
+rust-version = "1.77.2"
+license = "Apache-2.0"
+
+[lib]
+name = "cortex_desk_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2.12", features = [] }
+tauri-plugin-updater = { version = "2.14", default-features = false, features = [
+  "rustls-tls",
+  "system-proxy",
+] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
+cortex-app-core = { path = "../../../cortex-app-core/crates/cortex-app-core" }
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true
