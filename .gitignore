@@ -56,3 +56,8 @@ examples/befund-pipeline-demo/out/
 _auftraege/
 # Rohtest-Evidence mit lokalen Pfaden
 dashboard_plugin/evidence/python-tests.txt
+
+# Einzel-App (Tauri)
+app/node_modules/
+app/dist/
+app/src-tauri/target/
