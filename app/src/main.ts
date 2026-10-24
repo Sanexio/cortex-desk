@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { applyTheme, cycleTheme, readTheme } from "./theme";
+import { mountVorlagenBetrachter } from "./vorlagen-betrachter";
 
 interface LicenseOverview {
   state: string;
@@ -155,18 +156,10 @@ async function render(): Promise<void> {
     }
 
     if (active === "vorlagen") {
-      const card = el("section", "card");
-      card.appendChild(el("h2", undefined, "Phase-B-Vorlagen (Platzhalter)"));
+      const slot = el("div");
       const vorlagen = await loadVorlagen();
-      const ul = el("ul", "rules");
-      for (const v of vorlagen) {
-        const li = el("li");
-        li.appendChild(el("span", "mono", v.pfad));
-        li.appendChild(el("span", "muted", ` · ${v.phase} · ${v.typ}`));
-        ul.appendChild(li);
-      }
-      card.appendChild(ul);
-      body.appendChild(card);
+      mountVorlagenBetrachter(slot, { el, vorlagen, isTauri: isTauri() });
+      body.appendChild(slot);
     }
 
     if (active === "status") {

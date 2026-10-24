@@ -8,7 +8,7 @@ mod schluessel;
 use serde::Serialize;
 use tauri_plugin_updater::UpdaterExt;
 
-use crate::desk_content::{RuleEntry, VorlageEntry};
+use crate::desk_content::{RuleEntry, VorlageEntry, VorlageInhalt};
 
 #[derive(Serialize)]
 struct AppInfo {
@@ -41,6 +41,11 @@ fn rules_read(pfad: String) -> Result<String, String> {
 #[tauri::command]
 fn vorlagen_list() -> Result<Vec<VorlageEntry>, String> {
     desk_content::vorlagen_list()
+}
+
+#[tauri::command]
+fn vorlagen_read(pfad: String) -> Result<VorlageInhalt, String> {
+    desk_content::vorlagen_read(&pfad)
 }
 
 #[tauri::command]
@@ -80,6 +85,7 @@ pub fn run() {
             rules_list,
             rules_read,
             vorlagen_list,
+            vorlagen_read,
             lizenz_ueberblick,
             updater_check
         ])

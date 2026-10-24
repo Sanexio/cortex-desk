@@ -1,6 +1,7 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
+use base64::{engine::general_purpose::STANDARD, Engine};
 use serde::Serialize;
 
 #[derive(Debug, Serialize, Clone)]
@@ -21,11 +22,54 @@ fn repo_root() -> PathBuf {
     manifest.join("../..")
 }
 
-fn erlaubt(rel: &str) -> bool {
+fn erlaubt_regel(rel: &str) -> bool {
     if rel.contains("..") || rel.starts_with('/') {
         return false;
     }
     rel.starts_with("rules/") && rel.ends_with(".md")
+}
+
+fn erlaubt_vorlage(rel: &str) -> bool {
+    if rel.contains("..") || rel.starts_with('/') {
+        return false;
+    }
+    if !rel.starts_with("templates/") {
+        return false;
+    }
+    let lower = rel.to_ascii_lowercase();
+    lower.ends_with(".md") || lower.ends_with(".txt") || lower.ends_with(".pdf")
+}
+
+fn vorlage_format(rel: &str) -> Option<&'static str> {
+    let lower = rel.to_ascii_lowercase();
+    if lower.ends_with(".md") {
+        Some("markdown")
+    } else if lower.ends_with(".txt") {
+        Some("text")
+    } else if lower.ends_with(".pdf") {
+        Some("pdf")
+    } else {
+        None
+    }
+}
+
+fn canonical_unter_templates(full: &Path) -> Result<PathBuf, String> {
+    let canonical = full.canonicalize().map_err(|e| e.to_string())?;
+    let templates_canon = repo_root()
+        .join("templates")
+        .canonicalize()
+        .map_err(|e| e.to_string())?;
+    if !canonical.starts_with(&templates_canon) {
+        return Err("Pfad ausserhalb des Vorlagenordners".into());
+    }
+    Ok(canonical)
+}
+
+#[derive(Debug, Serialize, Clone)]
+pub struct VorlageInhalt {
+    pub format: String,
+    pub text: Option<String>,
+    pub pdf_base64: Option<String>,
 }
 
 pub fn rules_list() -> Result<Vec<RuleEntry>, String> {
@@ -53,7 +97,7 @@ pub fn rules_list() -> Result<Vec<RuleEntry>, String> {
 }
 
 pub fn rules_read(pfad: &str) -> Result<String, String> {
-    if !erlaubt(pfad) {
+    if !erlaubt_regel(pfad) {
         return Err("Pfad nicht erlaubt".into());
     }
     let full = repo_root().join(pfad);
@@ -68,6 +112,31 @@ pub fn rules_read(pfad: &str) -> Result<String, String> {
     fs::read_to_string(&canonical).map_err(|e| e.to_string())
 }
 
+pub fn vorlagen_read(pfad: &str) -> Result<VorlageInhalt, String> {
+    if !erlaubt_vorlage(pfad) {
+        return Err("Pfad nicht erlaubt".into());
+    }
+    let format = vorlage_format(pfad)
+        .ok_or_else(|| "Unbekanntes Vorlagenformat".to_string())?
+        .to_string();
+    let full = repo_root().join(pfad);
+    let canonical = canonical_unter_templates(&full)?;
+    if format == "pdf" {
+        let bytes = fs::read(&canonical).map_err(|e| e.to_string())?;
+        return Ok(VorlageInhalt {
+            format,
+            text: None,
+            pdf_base64: Some(STANDARD.encode(bytes)),
+        });
+    }
+    let text = fs::read_to_string(&canonical).map_err(|e| e.to_string())?;
+    Ok(VorlageInhalt {
+        format,
+        text: Some(text),
+        pdf_base64: None,
+    })
+}
+
 pub fn vorlagen_list() -> Result<Vec<VorlageEntry>, String> {
     let path = repo_root().join("docs/vorlagen-manifest.json");
     let text = fs::read_to_string(&path).map_err(|e| format!("Manifest nicht lesbar: {e}"))?;
@@ -79,7 +148,7 @@ pub fn vorlagen_list() -> Result<Vec<VorlageEntry>, String> {
     let mut out = Vec::new();
     for item in items {
         let pfad = item.get("pfad").and_then(|v| v.as_str()).unwrap_or("").to_string();
-        if pfad.is_empty() || !pfad.starts_with("templates/") {
+        if pfad.is_empty() || !erlaubt_vorlage(&pfad) {
             continue;
         }
         out.push(VorlageEntry {
@@ -118,6 +187,21 @@ mod tests {
     fn vorlagen_nur_templates() {
         let v = vorlagen_list().expect("vorlagen");
         assert!(!v.is_empty());
-        assert!(v.iter().all(|e| e.pfad.starts_with("templates/")));
+        assert!(v.iter().all(|e| erlaubt_vorlage(&e.pfad)));
+    }
+
+    #[test]
+    fn vorlagen_traversal_abgewiesen() {
+        assert!(vorlagen_read("templates/../README.md").is_err());
+        assert!(vorlagen_read("rules/DESK_RULES.md").is_err());
+        assert!(vorlagen_read("templates/../../etc/passwd").is_err());
+    }
+
+    #[test]
+    fn vorlagen_lesen_markdown() {
+        let v = vorlagen_read("templates/briefkopf.md").expect("lesen");
+        assert_eq!(v.format, "markdown");
+        assert!(v.text.as_ref().is_some_and(|t| t.contains("{{PRAXISBEZEICHNUNG}}")));
+        assert!(v.pdf_base64.is_none());
     }
 }
